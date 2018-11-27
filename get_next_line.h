@@ -22,7 +22,8 @@
 # include <sys/stat.h>
 # include <fcntl.h>
 # define BUFF_SIZE 32
-
-int get_next_line(const int fd, char **line);
+int		ft_new_line(char **s, char **line, int fd, int ret);
+int		ft_line(char **line, char *str, int ret, int fd);
+int		get_next_line(const int fd, char **line);
 
 #endif
