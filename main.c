@@ -21,8 +21,8 @@ int main()
 	fd = open("me",O_RDONLY);
 	while ( (retour = get_next_line(fd, &line)) > 0)
 	{
-//		printf("line =%s\n",line);
-//		printf("retour =%d\n",retour);
+		printf("line =%s\n",line);
+		printf("retour =%d\n",retour);
 		free(line);
 	}
 		printf("retourSortieBoucle =%d\n",retour);
