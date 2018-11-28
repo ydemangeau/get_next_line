@@ -6,7 +6,7 @@
 /*   By: ydemange <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/24 13:15:05 by ydemange          #+#    #+#             */
-/*   Updated: 2018/11/26 12:58:31 by ydemange         ###   ########.fr       */
+/*   Updated: 2018/11/28 16:38:02 by ydemange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,8 @@
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <fcntl.h>
-# define BUFF_SIZE 32
-int		ft_new_line(char **s, char **line, int fd, int ret);
-int		ft_line(char **line, char *str, int ret, int fd);
+# define BUFF_SIZE 5
+
 int		get_next_line(const int fd, char **line);
 
 #endif

@@ -1,82 +1,75 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   gnl.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ydemange <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/11/24 13:15:17 by ydemange          #+#    #+#             */
-/*   Updated: 2018/11/26 18:45:08 by ydemange         ###   ########.fr       */
+/*   Created: 2018/11/28 15:13:32 by ydemange          #+#    #+#             */
+/*   Updated: 2018/11/28 16:44:22 by ydemange         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static int		check_error(char **str,int fd, char **line)
+int		readline(char **str, int fd)
 {
-	if (fd < 0 || !line)
-		return (-1);
-	if (!*str)
+	char	buff[BUFF_SIZE + 1];
+	char	*tmp;
+	int		ret;
+
+	while ((ret = read(fd, buff, BUFF_SIZE)) > 0)
 	{
-		if (!(*str = ft_strdup("")))
+		if (ret < 0)
 			return (-1);
-//		printf("OK=%s\n",*str);
+		buff[ret] = '\0';
+		if (!*str)
+			*str = ft_strnew(1);
+		tmp = ft_strjoin(*str, buff);
+		free(*str);
+		*str = tmp;
+		if (ft_strchr(buff, '\n'))
+			break ;
+	}
+	return (ret);
+}
+
+int		new_line(char **str, int len, char **line)
+{
+	char *tmp;
+
+	if (str[0][len] == '\n')
+	{
+		*line = ft_strsub(*str, 0, len);
+		tmp = ft_strdup(&str[0][len + 1]);
+		free(*str);
+		*str = tmp;
+		if (*str[0] == '\0')
+			ft_strdel(str);
+	}
+	else if (str[0][len] == '\0')
+	{
+		*line = ft_strdup(*str);
+		ft_strdel(str);
 	}
 	return (1);
 }
 
-static char		*join(char *str, char *buff)
+int		get_next_line(const int fd, char **line)
 {
-	char *tmp;
-	tmp = ft_strjoin(str, buff);
-	free(str);
-	return (tmp);
-}
+	static char		*str;
+	int				ret;
+	int				len;
 
-static char		*readline(char *str, int fd)
-{
-	char	buff[BUFF_SIZE + 1];
-	int		ret;
-	
-	while ((ret = read(fd, buff, BUFF_SIZE)) > 0)
-	{
-		buff[ret] = '\0';
-		str = join(str, buff);
-//		printf("buff =%s\n",buff);
-	}
-	return (str);
-}
-
-int				get_next_line(const int fd, char **line)
-{
-	static char *str;
-	int			i;
-	int a;
-
-	a = 0;
-	if (check_error(&str, fd, line) == -1)
+	len = 0;
+	if (fd < 0 || line == NULL)
 		return (-1);
-	i = 0;
-	str = readline(str, fd);
-	if (str[i])
-	{
-		printf("str=\n%s\n",str);
-		while (str[i] != '\n' && str[i] != '\0')
-			i++;
-		if (i == 0)
-			*line = ft_strdup("");
-		else
-		{
-			*line = ft_strsub(str, 0, i);
-			str = &str[i + 1];
-		}
-		return (1);
-	}
-	else
-	{
-		str = NULL;
-		free(str);
-	}
-//	printf("str=%s\n",str);
-	return (0);
+	ret = readline(&str, fd);
+	if (ret == -1)
+		return (-1);
+	if (ret == 0 && !str)
+		return (0);
+	while (str[len] != '\n' && str[len] != '\0')
+		len++;
+	return (new_line(&str, len, line));
 }
