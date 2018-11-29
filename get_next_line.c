@@ -23,53 +23,53 @@ int		readline(char **str, int fd)
 		if (ret < 0)
 			return (-1);
 		buff[ret] = '\0';
-		if (!*str)
-			*str = ft_strnew(1);
-		tmp = ft_strjoin(*str, buff);
-		free(*str);
-		*str = tmp;
+		if (!str[fd])
+			str[fd] = ft_strnew(1);
+		tmp = ft_strjoin(str[fd], buff);
+		free(str[fd]);
+		str[fd] = tmp;
 		if (ft_strchr(buff, '\n'))
 			break ;
 	}
 	return (ret);
 }
 
-int		new_line(char **str, int len, char **line)
+int		new_line(char **str, int len, char **line, int fd)
 {
 	char *tmp;
 
-	if (str[0][len] == '\n')
+	if (str[fd][len] == '\n')
 	{
-		*line = ft_strsub(*str, 0, len);
-		tmp = ft_strdup(&str[0][len + 1]);
-		free(*str);
-		*str = tmp;
-		if (*str[0] == '\0')
-			ft_strdel(str);
+		*line = ft_strsub(str[fd], 0, len);
+		tmp = ft_strdup(&str[fd][len + 1]);
+		free(str[fd]);
+		str[fd] = tmp;
+		if (str[fd][0] == '\0')
+			ft_strdel(&str[fd]);
 	}
-	else if (str[0][len] == '\0')
+	else if (str[fd][len] == '\0')
 	{
-		*line = ft_strdup(*str);
-		ft_strdel(str);
+		*line = ft_strdup(str[fd]);
+		ft_strdel(&str[fd]);
 	}
 	return (1);
 }
 
 int		get_next_line(const int fd, char **line)
 {
-	static char		*str;
+	static char		*str[OPEN_MAX];
 	int				ret;
 	int				len;
-
+	
 	len = 0;
 	if (fd < 0 || line == NULL)
 		return (-1);
-	ret = readline(&str, fd);
+	ret = readline(str, fd);
 	if (ret == -1)
 		return (-1);
-	if (ret == 0 && !str)
+	if (ret == 0 && !str[fd])
 		return (0);
-	while (str[len] != '\n' && str[len] != '\0')
+	while (str[fd][len] != '\n' && str[fd][len] != '\0')
 		len++;
-	return (new_line(&str, len, line));
+	return (new_line(str, len, line, fd));
 }
